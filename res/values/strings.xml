@@ -8,5 +8,11 @@
     <string name="start">START</string>
     <string name="title_activity_sensor">SensorActivity</string>
     <string name="end">END</string>
+    
+    <string-array name="scream_picker">
+        <item>Scream 1</item>
+        <item>Scream 2</item>
+        <item>Scream 3</item>
+    </string-array>
 
 </resources>

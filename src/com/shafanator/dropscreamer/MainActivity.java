@@ -13,19 +13,25 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 
 import com.google.ads.AdRequest;
 import com.google.ads.AdSize;
 import com.google.ads.AdView;
 
   
-public class MainActivity extends Activity implements SensorEventListener{
+public class MainActivity extends Activity implements SensorEventListener, OnItemSelectedListener{
 	private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private MediaPlayer mp;
     private Intent i;
     private AdView adView;
+    public static int scream;
+    private int start;
 	@Override
 	
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,17 +40,50 @@ public class MainActivity extends Activity implements SensorEventListener{
 		mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), mSensorManager.SENSOR_DELAY_GAME);
-        mp = MediaPlayer.create(this, R.raw.scream);
+        
+        //make and use dropdown
+        makeDropdown();
+        
+        scream = R.raw.ascream;
+        start= scream;
+        String beep = R.raw.beep + "";
+        String glass = R.raw.glass + "";
+        
+        
+        mp = MediaPlayer.create(this, scream);
         i = new Intent(this, Drop.class);
         
         PowerManager mgr = (PowerManager)this.getSystemService(Context.POWER_SERVICE); 
         WakeLock wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock"); 
         wakeLock.acquire();
         startService(i);
+        Log.e("beep", beep);
+        Log.e("Glass", glass);
+        Log.e("Scream", scream+"");
         
         
 		
 	}
+	private void makeDropdown(){
+		Spinner spinner = (Spinner) findViewById(R.id.scream_picker);
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+		        R.array.scream_picker, android.R.layout.simple_spinner_item);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		spinner.setAdapter(adapter);
+		spinner.setOnItemSelectedListener(this);
+	}
+	public void onItemSelected(AdapterView<?> parent, View view, 
+            int pos, long id) {
+		Log.e("id", id +"");
+		scream = (int) (start + id) ;
+		mp = MediaPlayer.create(this, (int) (scream));
+		startService(i);
+		
+    }
+
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Another interface callback
+    }
 
 	 protected void onResume() {
 	    super.onResume();

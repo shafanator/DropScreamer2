@@ -38,13 +38,18 @@ public class Drop extends Service implements SensorEventListener{
 	private long time_since_last_cycle;
 	private long end_of_cycle;
 	private boolean just_run;
+	private int scream;
+	
 	public Drop() {
+		
 	}
 	public void onCreate() {
+		scream = MainActivity.scream;
 		mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mSensorManager.registerListener((SensorEventListener) this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), mSensorManager.SENSOR_DELAY_GAME);
-        mp = MediaPlayer.create(this, R.raw.scream);
+        mp = MediaPlayer.create(this, scream);
+       
         camera = null;
         if(this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)){
         	camera = Camera.open(); 
@@ -52,6 +57,7 @@ public class Drop extends Service implements SensorEventListener{
         end_of_cycle=0;
         
 	}
+	
 	public void onDestroy(){
 		
 		//stopSelf();
@@ -86,6 +92,10 @@ public class Drop extends Service implements SensorEventListener{
 		 time_since_last_cycle = end_of_cycle - System.currentTimeMillis();
 	     if(Math.abs(event.values[0]) < 1.0 && Math.abs(event.values[1]) < 1.0 && Math.abs(event.values[2]) < 1.0)
 	     {
+	    	 if(scream != MainActivity.scream){
+		    	 scream = MainActivity.scream;
+		    	 mp = MediaPlayer.create(this, scream);
+		     }
 	    	
 	 		mp.start();
 	 		Log.e("x", String.valueOf(event.values[0]));
@@ -132,6 +142,8 @@ public class Drop extends Service implements SensorEventListener{
 				e.printStackTrace();
 			}*/
 	     }
+	     
+	     
 	 }
 	 
 		
